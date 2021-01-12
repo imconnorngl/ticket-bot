@@ -5,14 +5,14 @@ const { ticketParent, supportRoles, ticketMessages } = require("../config.json")
 module.exports = async (bot, reaction, user) => {
     const guild = reaction.message.guild
     
-    var menu = await bot.db.menu.findOne({ user: reaction.message.id  })
+    var menu = await bot.db.menu.findOne({ id: reaction.message.id  })
 
     if (user.bot) return;
     if(!menu) return;
 
     reaction.users.remove(user.id)
 
-    var ticket = await bot.db.tickets.findOne({ id: user.id, active: true })
+    var ticket = await bot.db.tickets.findOne({ user: user.id, active: true })
     if (ticket) return bot.error(user, `You currently have a ticket open!`, true).catch(err => err)
 
     var permissionOverwrites = [{ id: guild.id, allow: [], deny: ["VIEW_CHANNEL"] }, { id: user.id, allow: ["VIEW_CHANNEL", "SEND_MESSAGES"], deny: ["MENTION_EVERYONE"] }]
